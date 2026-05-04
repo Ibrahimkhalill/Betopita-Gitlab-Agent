@@ -1,19 +1,20 @@
-import { GoogleGenerativeAI } from "@google/generativeai";
+import OpenAI from "openai";
 import { getConfig } from "../db.js";
 
-const GENAI_MODEL = "gemini-2.0-flash";
+const OPENAI_MODEL = "gpt-4o-mini";
 
-export async function getAiClient() {
-  const apiKey = getConfig("GEMINI_API_KEY") || process.env.GEMINI_API_KEY;
+async function getAiClient() {
+  const apiKey = getConfig("OPENAI_API_KEY") || process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    throw new Error("Gemini API key is missing");
+    throw new Error("OpenAI API key is missing. Please configure it in settings.");
   }
-  return new GoogleGenerativeAI(apiKey);
+  return new OpenAI({
+    apiKey: apiKey,
+  });
 }
 
 export async function analyzeProject(projectName: string, readme: string, codeSamples: string, treeSummary: string) {
-  const genAI = await getAiClient();
-  const model = genAI.getGenerativeModel({ model: GENAI_MODEL });
+  const client = await getAiClient();
 
   const prompt = `
     Analyze the following GitLab repository in detail.
@@ -40,15 +41,20 @@ export async function analyzeProject(projectName: string, readme: string, codeSa
     }
   `;
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+  const res = await client.chat.completions.create({
+    model: OPENAI_MODEL,
+    messages: [
+      { role: "system", content: "Return only valid JSON." },
+      { role: "user", content: prompt },
+    ],
+    response_format: { type: "json_object" },
+  });
+
+  return JSON.parse(res.choices[0].message.content!);
 }
 
 export async function generateGlobalInsights(projectsData: any[]) {
-  const genAI = await getAiClient();
-  const model = genAI.getGenerativeModel({ model: GENAI_MODEL });
+  const client = await getAiClient();
 
   const dataStr = JSON.stringify(projectsData, null, 2);
 
@@ -70,8 +76,14 @@ export async function generateGlobalInsights(projectsData: any[]) {
     }
   `;
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+  const res = await client.chat.completions.create({
+    model: OPENAI_MODEL,
+    messages: [
+      { role: "system", content: "Return only valid JSON." },
+      { role: "user", content: prompt },
+    ],
+    response_format: { type: "json_object" },
+  });
+
+  return JSON.parse(res.choices[0].message.content!);
 }

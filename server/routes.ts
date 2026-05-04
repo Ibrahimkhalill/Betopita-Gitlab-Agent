@@ -52,17 +52,19 @@ router.get("/config", (req, res) => {
     GITLAB_URL: getConfig("GITLAB_URL") || process.env.GITLAB_URL || "https://gitlab.com",
     GITLAB_GROUP: getConfig("GITLAB_GROUP") || process.env.GITLAB_GROUP || "",
     HAS_TOKEN: !!(getConfig("GITLAB_TOKEN") || process.env.GITLAB_TOKEN),
-    HAS_GEMINI_KEY: !!(getConfig("GEMINI_API_KEY") || process.env.GEMINI_API_KEY)
+    HAS_GEMINI_KEY: !!(getConfig("GEMINI_API_KEY") || process.env.GEMINI_API_KEY),
+    HAS_OPENAI_KEY: !!(getConfig("OPENAI_API_KEY") || process.env.OPENAI_API_KEY)
   });
 });
 
 router.post("/config", (req, res) => {
-  const { GITLAB_URL, GITLAB_TOKEN, GITLAB_GROUP, GEMINI_API_KEY } = req.body;
+  const { GITLAB_URL, GITLAB_TOKEN, GITLAB_GROUP, GEMINI_API_KEY, OPENAI_API_KEY } = req.body;
   
   if (GITLAB_URL) setConfig("GITLAB_URL", GITLAB_URL);
   if (GITLAB_TOKEN) setConfig("GITLAB_TOKEN", GITLAB_TOKEN);
   if (GITLAB_GROUP) setConfig("GITLAB_GROUP", GITLAB_GROUP);
   if (GEMINI_API_KEY) setConfig("GEMINI_API_KEY", GEMINI_API_KEY);
+  if (OPENAI_API_KEY) setConfig("OPENAI_API_KEY", OPENAI_API_KEY);
   
   res.json({ message: "Configuration updated" });
 });

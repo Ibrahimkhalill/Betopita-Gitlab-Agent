@@ -2,17 +2,10 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { RefreshCw } from 'lucide-react';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-interface LayoutProps {
-  children: React.ReactNode;
-  tabs: { id: string; label: string; icon: React.ReactNode }[];
-  activeTab: string;
-  onTabChange: (id: string) => void;
-  headerRight?: React.ReactNode;
 }
 
 interface LayoutProps {

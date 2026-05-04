@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Key, Globe, Terminal, Loader2, Settings as SettingsIcon } from 'lucide-react';
 
 export function Config() {
@@ -6,7 +6,8 @@ export function Config() {
     GITLAB_URL: '',
     GITLAB_TOKEN: '',
     GITLAB_GROUP: '',
-    GEMINI_API_KEY: ''
+    GEMINI_API_KEY: '',
+    OPENAI_API_KEY: ''
   });
   const [logs, setLogs] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
@@ -87,14 +88,28 @@ export function Config() {
               </div>
 
               <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">Gemini AI API Key</label>
+                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-1">OpenAI API Key (Primary)</label>
                 <div className="relative">
-                  <Terminal className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="password"
+                    value={config.OPENAI_API_KEY}
+                    onChange={e => setConfig({ ...config, OPENAI_API_KEY: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none transition-all dark:text-slate-200"
+                    placeholder={config.HAS_OPENAI_KEY ? "••••••••••••••••" : "sk-..."}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3 opacity-60">
+                <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Gemini AI Key (Legacy)</label>
+                <div className="relative">
+                  <Terminal className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
                   <input
                     type="password"
                     value={config.GEMINI_API_KEY}
                     onChange={e => setConfig({ ...config, GEMINI_API_KEY: e.target.value })}
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none transition-all dark:text-slate-200"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium focus:outline-none transition-all dark:text-slate-200"
                     placeholder={config.HAS_GEMINI_KEY ? "••••••••••••••••" : "AI key..."}
                   />
                 </div>
