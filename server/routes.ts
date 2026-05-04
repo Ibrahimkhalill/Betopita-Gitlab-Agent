@@ -28,6 +28,14 @@ router.get("/insights", (req, res) => {
   res.json(insights || null);
 });
 
+router.get("/similarities", (req, res) => {
+  const similarities = db.prepare("SELECT * FROM project_similarities ORDER BY similarity DESC").all();
+  res.json(similarities.map((s: any) => ({
+    ...s,
+    shared_features: JSON.parse(s.shared_features)
+  })));
+});
+
 router.get("/logs", (req, res) => {
   const logs = db.prepare("SELECT * FROM scan_logs ORDER BY id DESC LIMIT 20").all();
   res.json(logs);

@@ -11,33 +11,37 @@ export async function getAiClient() {
   return new GoogleGenerativeAI(apiKey);
 }
 
-export async function analyzeProject(projectName: string, readme: string, treeSummary: string) {
+export async function analyzeProject(projectName: string, readme: string, codeSamples: string, treeSummary: string) {
   const genAI = await getAiClient();
   const model = genAI.getGenerativeModel({ model: GENAI_MODEL });
 
   const prompt = `
-    Analyze the following GitLab project and extract key technical information.
+    Analyze the following GitLab repository in detail.
     Project Name: ${projectName}
     
-    README Content:
-    ${readme.substring(0, 4000)}
+    README:
+    ${readme.substring(0, 3000)}
     
-    Project Structure Summary:
+    KEY CODE FILES:
+    ${codeSamples.substring(0, 8000)}
+
+    PROJECT STRUCTURE:
     ${treeSummary}
 
-    Provide the output in valid JSON format with the following structure:
+    Perform a technical audit and return ONLY a valid JSON object with the following structure:
     {
-      "features": ["feature1", "feature2"],
-      "unique_features": ["unique1"],
+      "features": ["Feature A", "Feature B"],
+      "unique_features_candidate": ["Unique Logic X"], 
+      "tech_stack": ["React", "Python", "PostgreSQL"],
+      "architecture": "MVC / Microservices / etc",
       "quality_score": 0-100,
-      "quality_report": "Short summary of code quality and architecture",
-      "tech_stack": ["React", "Express", etc]
+      "quality_report": "Concise technical report on code standard and complexity",
+      "integrations": ["Stripe", "AWS S3", "Firebase"]
     }
   `;
 
   const result = await model.generateContent(prompt);
   const text = result.response.text();
-  // Simple extraction of JSON from markdown results if necessary
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
 }

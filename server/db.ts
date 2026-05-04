@@ -38,6 +38,15 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
+  CREATE TABLE IF NOT EXISTS project_similarities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    repo_a TEXT,
+    repo_b TEXT,
+    similarity REAL,
+    shared_features TEXT, -- JSON
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS scan_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     status TEXT,
